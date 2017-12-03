@@ -3,13 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "howler": "^2.0.5",
     "lodash": "^4.17.4",
     "matter-js": "^0.14.0",
     "orbit-controls-es6": "^1.0.10",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "stats.js": "^0.17.0",
-    "three": "^0.88.0"
+    "three": "^0.88.0",
+    "three-react-mtl-loader": "^1.0.3",
+    "three-react-obj-loader": "^1.0.4"
   },
   "devDependencies": {
     "react-scripts": "1.0.17"
