@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import Stats from 'stats.js';
-import OrbitControls from 'orbit-controls-es6';
+import Hammer from 'hammerjs';
 
 import Camera from './Camera';
 import Loader from './Loader';
@@ -11,6 +11,7 @@ export default class Game {
 
 	static STATE = {
 		BOOT: 'BOOT',
+		INTRO: 'INTRO',
 		SNAKE: 'SNAKE',
 		DYING: 'DYING',
 		EXITING: 'EXITING',
@@ -29,6 +30,8 @@ export default class Game {
 		this.scene = new THREE.Scene();
 
 		this.ui = ui;
+		this.hammer = new Hammer.Manager(container);
+		this.hammer.add(new Hammer.Swipe());
 		this.state = Game.STATE.BOOT;
 
 		this.camera = new Camera(this, 60, 1, 0.1, 1000);
@@ -48,34 +51,31 @@ export default class Game {
 		window.addEventListener('keyup', e => this.keys[e.keyCode] = false, false);
 		window.addEventListener('resize', this.resize);
 
+		this.hammer.on('swipe', (e) => {
+			this.keys[Game.KEYS.W] = e.direction === Hammer.DIRECTION_UP;
+			this.keys[Game.KEYS.S] = e.direction === Hammer.DIRECTION_DOWN;
+			this.keys[Game.KEYS.A] = e.direction === Hammer.DIRECTION_LEFT;
+			this.keys[Game.KEYS.D] = e.direction === Hammer.DIRECTION_RIGHT;
+		});
+
 		this.stats = new Stats();
-
-		if (Game.DEBUG) {
-			this.scene.add(new THREE.AxesHelper());
-			this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-			this.controls.enabled = true;
-			this.controls.maxDistance = 1500;
-			this.controls.minDistance = 0;
-
-			document.body.appendChild(this.stats.dom);
-		}
 
 		this.resize();
 		this.create();
 	}
 
 	create = async () => {
-		await this.loader.loadModel('wall', '/assets/models/wall');
-		await this.loader.loadModel('snakeStart', '/assets/models/snake-head');
-		await this.loader.loadModel('snakeCorridor', '/assets/models/snake-body-corridor');
-		await this.loader.loadModel('snakeHealth', '/assets/models/snake-body-health');
-		await this.loader.loadModel('snakeEnd', '/assets/models/snake-body');
-		await this.loader.loadModel('snakeBody', '/assets/models/snake-body');
-		await this.loader.loadModel('start', '/assets/models/start');
-		await this.loader.loadModel('end', '/assets/models/end');
-		await this.loader.loadModel('pillar', '/assets/models/pillar');
-		await this.loader.loadModel('gem', '/assets/models/gem');
-		await this.loader.loadModel('outline', '/assets/models/outline');
+		await this.loader.loadModel('wall', 'assets/models/wall');
+		await this.loader.loadModel('snakeStart', 'assets/models/snake-head');
+		await this.loader.loadModel('snakeCorridor', 'assets/models/snake-body-corridor');
+		await this.loader.loadModel('snakeHealth', 'assets/models/snake-body-health');
+		await this.loader.loadModel('snakeEnd', 'assets/models/snake-body');
+		await this.loader.loadModel('snakeBody', 'assets/models/snake-body');
+		await this.loader.loadModel('start', 'assets/models/start');
+		await this.loader.loadModel('end', 'assets/models/end');
+		await this.loader.loadModel('pillar', 'assets/models/pillar');
+		await this.loader.loadModel('gem', 'assets/models/gem');
+		await this.loader.loadModel('outline', 'assets/models/outline');
 		
 		this.loader.models.snakeStart.scale.set(0.5, 0.5, 0.5);
 		this.loader.models.snakeCorridor.scale.set(0.5, 0.5, 0.5);
@@ -89,8 +89,9 @@ export default class Game {
 
 		this.level = new Level(this);
 		this.scene.add(this.level);
+		this.camera.reset();
 
-		this.setState(Game.STATE.SNAKE);
+		this.setState(Game.STATE.INTRO);
 		this.update();
 		this.ui.setState({ loading: false });
 	}
@@ -108,7 +109,9 @@ export default class Game {
 			hunger: this.level.snake.hunger,
 		});
 
+		this.level.snake.reset();
 		this.camera.reset();
+		this.setState(Game.STATE.SNAKE);
 	}
 
 	update = () => {
@@ -122,10 +125,6 @@ export default class Game {
 		this.renderer.render(this.scene, this.camera);
 		this.stats.end();
 		requestAnimationFrame(this.update);
-
-		if (this.ui.state.controls && (this.keys[Game.KEYS.W] || this.keys[Game.KEYS.D] || this.keys[Game.KEYS.S] || this.keys[Game.KEYS.A])) {
-			this.ui.setState({ controls: false });
-		}
 	}
 
 	setState = (state) => {

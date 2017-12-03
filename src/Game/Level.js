@@ -6,10 +6,10 @@ import Cave from './Cave';
 
 export default class Level extends THREE.Group {
 	static ROOM = {
-		START: { name: 'START', color: 0xffffff },
-		END: { name: 'END', color: 0xffff00 },
-		CORRIDOR: { name: 'CORRIDOR', color: 0xe6f2e9 },
-		HEALTH: { name: 'HEALTH', color: 0xfe4365 },
+		START: { name: 'START', color: 0xffffff, chance: 0 },
+		END: { name: 'END', color: 0xffff00, chance: 0 },
+		CORRIDOR: { name: 'CORRIDOR', color: 0xe6f2e9, chance: 0.8 },
+		HEALTH: { name: 'HEALTH', color: 0xfe4365, chance: 0.05 },
 
 		// LOOT: { name: 'LOOT', color: 0x00ffff },
 		// BOSS: { name: 'BOSS', color: 0xff00ff },

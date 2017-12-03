@@ -9,8 +9,8 @@ export default class Snake extends THREE.Group {
 	static SPEED = 0.25;
 
 	static SOUND = {
-		DEATH: new Howl({ src: ['/assets/music/death.mp3', '/assets/music/death.webm', '/assets/music/death.wav'] }),
-		EAT: new Howl({ src: ['/assets/music/eat.mp3', '/assets/music/eat.webm', '/assets/music/eat.wav'] }),
+		DEATH: new Howl({ src: ['assets/music/death.mp3', 'assets/music/death.webm', 'assets/music/death.wav'] }),
+		EAT: new Howl({ src: ['assets/music/eat.mp3', 'assets/music/eat.webm', 'assets/music/eat.wav'] }),
 	}
 
 	constructor(game, level, x, y, length) {
@@ -88,6 +88,14 @@ export default class Snake extends THREE.Group {
 			const gem = this.level.cave.gems.children[i];
 			if (this.head.position.x === gem.position.x && this.head.position.z === gem.position.z) {
 				this.level.cave.gems.remove(gem);
+
+				if (gem.room === Level.ROOM.HEALTH) {
+					this.lives = Math.min(this.lives + 1, this.hearts);
+					console.log(this.lives, this.hearts);
+					this.game.ui.setState({ lives: this.lives });
+					break;
+				}
+
 				this.rooms.push(gem.room);
 				this.eaten += 1;
 				this.game.ui.setState({ eaten: this.eaten });
@@ -104,7 +112,7 @@ export default class Snake extends THREE.Group {
 		if (!force) {
 			const next = this.head.position.clone().add(this.direction);
 
-			for (let i = 0; i < this.body.children.length; i++) {
+			for (let i = 1; i < this.body.children.length; i++) {
 				const child = this.body.children[i];
 				if (child.position.x === next.x && child.position.z === next.z) {
 					this.game.camera.shake(10, 10);

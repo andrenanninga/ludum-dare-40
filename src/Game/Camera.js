@@ -1,8 +1,10 @@
 import * as THREE from 'three';
 import { random } from 'lodash';
 
+import Game from './index';
+
 export default class Camera extends THREE.PerspectiveCamera {
-	static SPEED = 1;
+	static SPEED = 1.5;
 	static DAMPING = 0.9;
 
 	constructor(game, fov, aspect, near, far) {
@@ -25,18 +27,23 @@ export default class Camera extends THREE.PerspectiveCamera {
 			return;
 		}
 
+		const zoom = this.game.state === Game.STATE.INTRO ? 4 : 1;
+
 		this.position.x += (snake.head.position.x - this.position.x) * Camera.SPEED * delta;
-		this.position.y += (16 - this.position.y) * Camera.SPEED * delta;
-		this.position.z += (snake.head.position.z - this.position.z + 6) * Camera.SPEED * delta;
-		this.lookAt(new THREE.Vector3(this.position.x, 0, this.position.z - 6));
+		this.position.y += ((16 / zoom) - this.position.y) * Camera.SPEED * delta;
+		this.position.z += (snake.head.position.z - this.position.z + (6 / zoom)) * Camera.SPEED * delta;
+		this.lookAt(new THREE.Vector3(this.position.x, 0, this.position.z - (6 / zoom)));
 	}
 
 	reset = () => {
 		const snake = this.game.level.snake;
 		
+		const zoom = this.game.state === Game.STATE.INTRO ? 4 : 1;
+
 		this.position.x = snake.head.position.x;
-		this.position.y = 16;
-		this.position.z = snake.head.position.z + 6;
+		this.position.y = 16 / zoom;
+		this.position.z = snake.head.position.z + (6 / zoom);
+		this.lookAt(new THREE.Vector3(this.position.x, 0, this.position.z - (6 / zoom)));
 		this.tracking = true;
 	}
 

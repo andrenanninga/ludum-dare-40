@@ -18,6 +18,10 @@ export default class Corridor extends THREE.Group {
 			{ x: 2, y: 2 },
 			{ x: 1, y: 3 },
 			{ x: 3, y: 3 },
+			{ x: 0, y: 0 },
+			{ x: 0, y: 4 },
+			{ x: 4, y: 4 },
+			{ x: 4, y: 0 },
 		];
 
 		this.pillars.forEach(p => {

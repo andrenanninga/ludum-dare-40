@@ -6,7 +6,7 @@ const style = {
 		display: 'flex',
 		justifyContent: 'center',
 		position: 'absolute',
-		top: 32,
+		top: 80,
 		left: 64,
 		right: 64,
 	},

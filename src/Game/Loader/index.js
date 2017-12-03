@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import path from 'path';
 
 import OBJLoader from './OBJLoader';
-import MTLLoader from 'three-react-mtl-loader';
+import MTLLoader from './MTLLoader';
 
 export default class Loader {
 	constructor(game) {

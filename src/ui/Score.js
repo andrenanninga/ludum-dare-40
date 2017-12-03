@@ -6,13 +6,13 @@ const style = {
 		justifyContent: 'center',
 		position: 'absolute',
 		top: 32,
-		right: 64,
+		right: 48,
 		fontFamily: '"Fredoka One", cursive',
 		color: '#79bd9a',
 	},
 
 	text: {
-		fontSize: 28,
+		fontSize: 24,
 		marginRight: 8,
 	},
 
@@ -28,7 +28,7 @@ export default class extends PureComponent {
 		const { score } = this.props;
 		return (
 			<div style={style.container}>
-				<span style={style.text}>total score -</span> <span style={style.score}>{score}</span>
+				<span style={style.text}>score -</span> <span style={style.score}>{score}</span>
 			</div>
 		);
 	}

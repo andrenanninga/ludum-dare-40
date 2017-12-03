@@ -6,13 +6,13 @@ const style = {
 		justifyContent: 'center',
 		position: 'absolute',
 		top: 32,
-		left: 64,
+		left: 48,
 		fontFamily: '"Fredoka One", cursive',
 		color: '#79bd9a',
 	},
 
 	text: {
-		fontSize: 28,
+		fontSize: 24,
 		marginLeft: 8,
 	},
 

@@ -28,6 +28,7 @@ export default class Cave extends THREE.Group {
 		this.map = null;
 		this.gems = new THREE.Group();
 		this.rooms = new THREE.Group();
+		this.size = 0;
 
 		this.spawn = new THREE.Vector3();
 
@@ -38,7 +39,8 @@ export default class Cave extends THREE.Group {
 	}
 
 	update = (delta, time) => {
-		if (this.level.snake.isMoving()) {
+		const isFull = this.gems.children.length > this.size * 2;
+		if (this.level.snake.isMoving() && this.level.snake.isHungry() && !isFull) {
 			this.cooldown -= delta;
 		}
 
@@ -62,8 +64,7 @@ export default class Cave extends THREE.Group {
 	spawnGem = () => {
 		const room = sample(Level.ROOM);
 
-		// Don't spawn more START rooms
-		if (room.name === 'START' || room.name === 'END') {
+		if (Math.random() > room.chance) {
 			return false;
 		}
 
@@ -109,13 +110,14 @@ export default class Cave extends THREE.Group {
 		this.addRoom(snake, snake.head, Level.ROOM.START);
 		this.spawn = snake.head.position.clone().multiplyScalar(Cave.ROOM);
 
+		this.size = snake.body.children.length + 1;
 		snake.body.children.forEach(child => {
 			this.addRoom(snake, child, child.room);
 		});
 
 		Object.keys(this.map).map(coord => this.placeTile(coord));
 
-		snake.hunger = Math.ceil(snake.body.children.length / 2);
+		snake.hunger = Math.min(Math.ceil(snake.body.children.length / 2), snake.hunger + 2);
 		this.game.ui.setState({ hunger: snake.hunger });
 	}
 
