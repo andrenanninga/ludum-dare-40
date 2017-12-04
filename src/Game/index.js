@@ -31,7 +31,7 @@ export default class Game {
 
 		this.ui = ui;
 		this.hammer = new Hammer.Manager(container);
-		this.hammer.add(new Hammer.Swipe());
+		this.hammer.add(new Hammer.Pan({ threshold: 0 }));
 		this.state = Game.STATE.BOOT;
 
 		this.camera = new Camera(this, 60, 1, 0.1, 1000);
@@ -51,11 +51,26 @@ export default class Game {
 		window.addEventListener('keyup', e => this.keys[e.keyCode] = false, false);
 		window.addEventListener('resize', this.resize);
 
-		this.hammer.on('swipe', (e) => {
-			this.keys[Game.KEYS.W] = e.direction === Hammer.DIRECTION_UP;
-			this.keys[Game.KEYS.S] = e.direction === Hammer.DIRECTION_DOWN;
-			this.keys[Game.KEYS.A] = e.direction === Hammer.DIRECTION_LEFT;
-			this.keys[Game.KEYS.D] = e.direction === Hammer.DIRECTION_RIGHT;
+		const zero = { x: 0, y: 0 };
+		const direction = 0;
+
+		this.hammer.on('pan', (e) => {
+			const up = e.direction === Hammer.DIRECTION_UP && zero.y - e.deltaY > 20;
+			const down = e.direction === Hammer.DIRECTION_DOWN && zero.y - e.deltaY < -20;
+			const left = e.direction === Hammer.DIRECTION_LEFT && zero.x - e.deltaX > 20;
+			const right = e.direction === Hammer.DIRECTION_RIGHT && zero.x - e.deltaX < -20;
+
+			if (up || down || left || right) {
+				zero.x = e.deltaX;
+				zero.y = e.deltaY;
+			}
+
+			this.keys[Game.KEYS.W] = up;
+			this.keys[Game.KEYS.S] = down;
+			this.keys[Game.KEYS.A] = left;
+			this.keys[Game.KEYS.D] = right;
+
+			this.level.snake.updateDirection();
 		});
 
 		this.stats = new Stats();

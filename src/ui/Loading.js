@@ -21,7 +21,7 @@ const style = {
 
 export default class extends PureComponent {
 	state = {
-		dots: 3,
+		dots: 1,
 	}
 
 	componentDidMount() {

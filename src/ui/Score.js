@@ -9,6 +9,7 @@ const style = {
 		right: 48,
 		fontFamily: '"Fredoka One", cursive',
 		color: '#79bd9a',
+		zIndex: 10001,
 	},
 
 	text: {

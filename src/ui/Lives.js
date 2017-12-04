@@ -9,6 +9,7 @@ const style = {
 		top: 80,
 		left: 64,
 		right: 64,
+		zIndex: 10001,
 	},
 
 	heart: {

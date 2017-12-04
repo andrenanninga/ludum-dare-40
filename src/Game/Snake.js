@@ -30,12 +30,19 @@ export default class Snake extends THREE.Group {
 		this.hearts = 3;
 		this.lives = 3;
 
+		this.target = new THREE.Mesh(
+			new THREE.CylinderGeometry(0.2, 0.1, 0.1, 8),
+			new THREE.MeshBasicMaterial({ color: 0x53777a })
+		);
+		this.target.position.y = 0.02;
+
 		this.head = this.game.loader.models.snakeStart.clone();
 		this.body = new THREE.Group();
 		this.rooms = [];
 		
 		this.add(this.head);
 		this.add(this.body);
+		this.add(this.target);
 	}
 
 	isMoving = () => {
@@ -44,6 +51,21 @@ export default class Snake extends THREE.Group {
 
 	isHungry = () => {
 		return this.eaten < this.hunger;
+	}
+
+	updateDirection = () => {
+		if (this.game.keys[Game.KEYS.W] && this.prevDirection.z !== 1) {
+			this.direction.set(0, 0, -1);
+		}
+		if (this.game.keys[Game.KEYS.S] && this.prevDirection.z !== -1) {
+			this.direction.set(0, 0, 1);
+		}
+		if (this.game.keys[Game.KEYS.A] && this.prevDirection.x !== 1) {
+			this.direction.set(-1, 0, 0);
+		}
+		if (this.game.keys[Game.KEYS.D] && this.prevDirection.x !== -1) {
+			this.direction.set(1, 0, 0);
+		}
 	}
 
 	update = (delta) => {
@@ -66,6 +88,13 @@ export default class Snake extends THREE.Group {
 			return;
 		}
 
+		if (this.cooldown < 0 && this.isMoving()) {
+			this.prevDirection.copy(this.direction);
+			this.slither();
+		}
+
+		this.updateDirection();
+
 		if (this.game.keys[Game.KEYS.W] && this.prevDirection.z !== 1) {
 			this.direction.set(0, 0, -1);
 		}
@@ -79,10 +108,7 @@ export default class Snake extends THREE.Group {
 			this.direction.set(1, 0, 0);
 		}
 
-		if (this.cooldown < 0 && this.isMoving()) {
-			this.prevDirection.copy(this.direction);
-			this.slither();
-		}
+		this.target.position.copy(this.head.position).add(this.direction);
 
 		for (let i = this.level.cave.gems.children.length - 1; i >= 0; i--) {
 			const gem = this.level.cave.gems.children[i];
@@ -112,7 +138,7 @@ export default class Snake extends THREE.Group {
 		if (!force) {
 			const next = this.head.position.clone().add(this.direction);
 
-			for (let i = 1; i < this.body.children.length; i++) {
+			for (let i = 1; i < this.body.children.length - 1; i++) {
 				const child = this.body.children[i];
 				if (child.position.x === next.x && child.position.z === next.z) {
 					this.game.camera.shake(10, 10);

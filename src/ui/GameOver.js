@@ -17,6 +17,7 @@ const style = {
 		fontFamily: '"Fredoka One", cursive',
 		color: '#79bd9a',
 		fontSize: 64,
+		backgroundColor: 'rgba(85, 98, 111, 0.6)'
 	},
 
 	small: {
